@@ -29,7 +29,7 @@ function Post() {
         },
         {
           headers: {
-            accessToken: sessionStorage.getItem("accessToken"),
+            accessToken: localStorage.getItem("accessToken"),
           },
         }
       )
@@ -37,7 +37,10 @@ function Post() {
         if (response.data.error) {
           alert(response.data.error);
         } else {
-          setComments([...comments, { commentBody: newComment }]);
+          setComments([
+            ...comments,
+            { commentBody: newComment, username: response.data.username },
+          ]);
           setNewComment("");
         }
       });
@@ -71,6 +74,7 @@ function Post() {
             return (
               <div className="comment" key={key}>
                 {comment.commentBody}
+                <label> Username: {comment.username}</label>
               </div>
             );
           })}
