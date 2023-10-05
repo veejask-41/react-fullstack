@@ -1,32 +1,38 @@
-import React from "react";
+import React, { useContext } from "react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../helpers/AuthContext";
 
 function Home() {
   const [allPosts, setAllPosts] = useState([]);
   const [likedPosts, setLikedPosts] = useState([]);
   let navigate = useNavigate();
+  const { authState } = useContext(AuthContext);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:1234/posts", {
-        headers: {
-          accessToken: localStorage.getItem("accessToken"),
-        },
-      })
-      .then((response) => {
-        if (response.data.error) {
-          alert(response.data.error);
-        } else {
-          setAllPosts(response.data.allPosts);
-          setLikedPosts(
-            response.data.likedPosts.map((likedPost) => {
-              return likedPost.PostId;
-            })
-          );
-        }
-      });
+    if (!authState.status) {
+      navigate("/login");
+    } else {
+      axios
+        .get("http://localhost:1234/posts", {
+          headers: {
+            accessToken: localStorage.getItem("accessToken"),
+          },
+        })
+        .then((response) => {
+          if (response.data.error) {
+            alert(response.data.error);
+          } else {
+            setAllPosts(response.data.allPosts);
+            setLikedPosts(
+              response.data.likedPosts.map((likedPost) => {
+                return likedPost.PostId;
+              })
+            );
+          }
+        });
+    }
   }, []);
 
   const likePost = (PostId) => {

@@ -14,7 +14,7 @@ function App() {
   const [authState, setAuthState] = useState({
     username: "",
     id: 0,
-    status: false,
+    status: localStorage.getItem("accessToken") ? true : false,
   });
 
   useEffect(() => {
@@ -40,6 +40,7 @@ function App() {
   const logout = () => {
     localStorage.removeItem("accessToken");
     setAuthState({ username: "", id: 0, status: false });
+    
   };
 
   return (
@@ -47,8 +48,12 @@ function App() {
       <AuthContext.Provider value={{ authState, setAuthState }}>
         <Router>
           <div className="navbar">
-            <Link to="/createpost">Create a post</Link>
-            <Link to="/">Home Page</Link>
+            {authState.status && (
+              <>
+                <Link to="/createpost">Create a post</Link>
+                <Link to="/">Home Page</Link>
+              </>
+            )}
             {!authState.status ? (
               <>
                 <Link to="/login">Login</Link>
@@ -65,7 +70,7 @@ function App() {
             <Route path="/post/:id" exact Component={Post} />
             <Route path="/login" exact Component={Login} />
             <Route path="/registration" exact Component={Registration} />
-            <Route path="*" exact Component={PageNotFound}/>
+            <Route path="*" exact Component={PageNotFound} />
           </Routes>
         </Router>
       </AuthContext.Provider>
