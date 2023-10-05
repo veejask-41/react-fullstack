@@ -13,19 +13,64 @@ function Home() {
     });
   }, []);
 
+  const likePost = (PostId) => {
+    axios
+      .post(
+        "http://localhost:1234/like",
+        { PostId: PostId },
+        {
+          headers: {
+            accessToken: localStorage.getItem("accessToken"),
+          },
+        }
+      )
+      .then((response) => {
+        if (response.data.error) {
+          alert(response.data.error);
+        } else {
+          setAllPosts(
+            allPosts.map((post) => {
+              if (post.id === PostId) {
+                if (response.data.liked) {
+                  return { ...post, Likes: [...post.Likes, 0] };
+                } else {
+                  const likesArr = post.Likes;
+                  return { ...post, Likes: likesArr };
+                }
+              } else {
+                return post;
+              }
+            })
+          );
+        }
+      });
+  };
+
   return (
     <div>
       {allPosts.map((value, key) => {
         return (
-          <div
-            className="post"
-            onClick={() => {
-              navigate(`/post/${value.id}`);
-            }}
-          >
+          <div className="post">
             <div className="title">{value.title}</div>
-            <div className="body">{value.postText}</div>
-            <div className="footer">{value.username}</div>
+            <div
+              className="body"
+              onClick={() => {
+                navigate(`/post/${value.id}`);
+              }}
+            >
+              {value.postText}
+            </div>
+            <div className="footer">
+              {value.username}{" "}
+              <button
+                onClick={() => {
+                  likePost(value.id);
+                }}
+              >
+                Like
+              </button>
+              <label>{value.Likes.length}</label>
+            </div>
           </div>
         );
       })}
