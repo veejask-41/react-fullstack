@@ -77,12 +77,56 @@ function Post() {
       });
   };
 
+  const editPost = (edit) => {
+    if (edit === "title") {
+      let newTitle = prompt("Enter new title");
+      axios
+        .put(
+          "http://localhost:1234/posts/title",
+          { newTitle: newTitle, id: id },
+          { headers: { accessToken: localStorage.getItem("accessToken") } }
+        )
+        .then((response) => {
+          setPostContents({ ...postContents, title: newTitle });
+        });
+    } else {
+      let newPostText = prompt("Enter new post text");
+      axios
+        .put(
+          "http://localhost:1234/posts/postText",
+          { newPostText: newPostText, id: id },
+          { headers: { accessToken: localStorage.getItem("accessToken") } }
+        )
+        .then((response) => {
+          setPostContents({ ...postContents, postText: newPostText });
+        });
+    }
+  };
+
   return (
     <div className="postPage">
       <div className="leftSide">
         <div className="post" id="individual">
-          <div className="title">{postContents.title}</div>
-          <div className="body">{postContents.postText}</div>
+          <div
+            className="title"
+            onClick={() => {
+              if (authState.username === postContents.username) {
+                editPost("title");
+              }
+            }}
+          >
+            {postContents.title}
+          </div>
+          <div
+            className="body"
+            onClick={() => {
+              if (authState.username === postContents.username) {
+                editPost("body");
+              }
+            }}
+          >
+            {postContents.postText}
+          </div>
           <div className="footer">
             {postContents.username}
             {authState.username === postContents.username && (
