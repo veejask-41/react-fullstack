@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "root",
-    "password": "KSajeev@5",
+    "password": "",
     "database": "reactfullstackdb",
     "host": "localhost",
     "dialect": "mysql"
